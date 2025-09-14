@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Form Atleta -->
+    <record id="view_athlete_form" model="ir.ui.view">
+        <field name="name">medical.athlete.form</field>
+        <field name="model">medical.athlete</field>
+        <field name="arch" type="xml">
+            <form string="Atleta">
+                <header>
+                    <button name="action_view_medical_visits" type="object" string="Visualizza Visite" class="btn-primary"/>
+                    <button name="action_create_medical_visit" type="object" string="Nuova Visita" class="btn-secondary"/>
+                    <field name="medical_status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_medical_visits" icon="fa-heartbeat">
+                            <field string="Visite" name="medical_visit_ids" widget="statinfo"/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Non Attivo" bg_color="bg-danger" invisible="active_member"/>
+                    
+                    <div class="oe_title">
+                        <label for="name" string="Nome Completo"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group name="personal_info" string="Dati Anagrafici">
+                            <field name="first_name" required="1"/>
+                            <field name="last_name" required="1"/>
+                            <field name="athlete_code"/>
+                            <field name="fiscal_code"/>
+                            <field name="birth_date"/>
+                            <field name="birth_place"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                        </group>
+                        
+                        <group name="sport_info" string="Dati Sportivi">
+                            <field name="sport_discipline"/>
+                            <field name="sport_category"/>
+                            <field name="registration_date"/>
+                            <field name="active_member"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group name="contact_info" string="Contatti">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="mobile" widget="phone"/>
+                        </group>
+                        
+                        <group name="medical_info" string="Stato Medico">
+                            <field name="last_medical_visit"/>
+                            <field name="next_medical_visit_due"/>
+                            <field name="medical_status" widget="badge" decoration-success="medical_status == 'valid'" decoration-warning="medical_status == 'expiring'" decoration-danger="medical_status == 'expired'"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Indirizzo" name="address">
+                            <group>
+                                <group>
+                                    <field name="street"/>
+                                    <field name="street2"/>
+                                    <field name="city"/>
+                                    <field name="zip"/>
+                                </group>
+                                <group>
+                                    <field name="state_id"/>
+                                    <field name="country_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Contatti Emergenza" name="emergency">
+                            <group>
+                                <field name="emergency_contact_name"/>
+                                <field name="emergency_contact_phone" widget="phone"/>
+                                <field name="emergency_contact_relation"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Visite Mediche" name="medical_visits">
+                            <field name="medical_visit_ids" context="{'default_athlete_id': active_id}">
+                                <tree decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'">
+                                    <field name="name"/>
+                                    <field name="visit_date"/>
+                                    <field name="visit_type"/>
+                                    <field name="doctor_name"/>
+                                    <field name="result"/>
+                                    <field name="expiry_date"/>
+                                    <field name="days_to_expiry"/>
+                                    <field name="is_current" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Note" name="notes">
+                            <field name="notes" placeholder="Note aggiuntive sull'atleta..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree Atleta -->
+    <record id="view_athlete_tree" model="ir.ui.view">
+        <field name="name">medical.athlete.tree</field>
+        <field name="model">medical.athlete</field>
+        <field name="arch" type="xml">
+            <tree string="Atleti" decoration-muted="not active_member" decoration-danger="medical_status == 'expired'" decoration-warning="medical_status == 'expiring'">
+                <field name="athlete_code"/>
+                <field name="name"/>
+                <field name="age"/>
+                <field name="sport_discipline"/>
+                <field name="sport_category"/>
+                <field name="last_medical_visit"/>
+                <field name="next_medical_visit_due"/>
+                <field name="medical_status" widget="badge" decoration-success="medical_status == 'valid'" decoration-warning="medical_status == 'expiring'" decoration-danger="medical_status in ('expired', 'none')"/>
+                <field name="active_member" widget="boolean_toggle"/>
+                <field name="email"/>
+                <field name="mobile"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Kanban Atleta -->
+    <record id="view_athlete_kanban" model="ir.ui.view">
+        <field name="name">medical.athlete.kanban</field>
+        <field name="model">medical.athlete</field>
+        <field name="arch" type="xml">
+            <kanban string="Atleti">
+                <field name="name"/>
+                <field name="athlete_code"/>
+                <field name="sport_discipline"/>
+                <field name="medical_status"/>
+                <field name="age"/>
+                <field name="next_medical_visit_due"/>
+                <field name="active_member"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_image_fill_left d-none d-md-block" t-attf-style="background-color: #{record.medical_status.raw_value == 'valid' ? '#28a745' : record.medical_status.raw_value == 'expiring' ? '#ffc107' : '#dc3545'}"/>
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                        <br/>
+                                        <small><field name="athlete_code"/></small>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div>
+                                            <i class="fa fa-trophy" role="img" aria-label="Disciplina" title="Disciplina"/> <field name="sport_discipline"/>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-birthday-cake" role="img" aria-label="Età" title="Età"/> <field name="age"/> anni
+                                        </div>
+                                        <div t-if="record.next_medical_visit_due.raw_value">
+                                            <i class="fa fa-heartbeat" role="img" aria-label="Prossima scadenza" title="Prossima scadenza"/> Scade: <field name="next_medical_visit_due"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge" t-att-class="record.medical_status.raw_value == 'valid' ? 'badge-success' : record.medical_status.raw_value == 'expiring' ? 'badge-warning' : 'badge-danger'">
+                                            <field name="medical_status"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right" t-if="not record.active_member.raw_value">
+                                        <span class="badge badge-secondary">Non Attivo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Search Atleta -->
+    <record id="view_athlete_search" model="ir.ui.view">
+        <field name="name">medical.athlete.search</field>
+        <field name="model">medical.athlete</field>
+        <field name="arch" type="xml">
+            <search string="Cerca Atleti">
+                <field name="name" string="Nome" filter_domain="['|', ('name', 'ilike', self), ('athlete_code', 'ilike', self)]"/>
+                <field name="sport_discipline"/>
+                <field name="sport_category"/>
+                <field name="medical_status"/>
+                
+                <filter string="Soci Attivi" name="active_members" domain="[('active_member', '=', True)]"/>
+                <filter string="Soci Non Attivi" name="inactive_members" domain="[('active_member', '=', False)]"/>
+                
+                <separator/>
+                <filter string="Certificato Valido" name="medical_valid" domain="[('medical_status', '=', 'valid')]"/>
+                <filter string="In Scadenza" name="medical_expiring" domain="[('medical_status', '=', 'expiring')]"/>
+                <filter string="Scaduto" name="medical_expired" domain="[('medical_status', '=', 'expired')]"/>
+                <filter string="Nessun Certificato" name="no_medical" domain="[('medical_status', '=', 'none')]"/>
+                
+                <separator/>
+                <filter string="Giovanili" name="youth_category" domain="[('sport_category', '=', 'youth')]"/>
+                <filter string="Amatoriali" name="amateur_category" domain="[('sport_category', '=', 'amateur')]"/>
+                <filter string="Agonistici" name="competitive_category" domain="[('sport_category', '=', 'competitive')]"/>
+                
+                <group expand="0" string="Raggruppa per">
+                    <filter string="Disciplina Sportiva" name="group_sport_discipline" context="{'group_by': 'sport_discipline'}"/>
+                    <filter string="Categoria" name="group_sport_category" context="{'group_by': 'sport_category'}"/>
+                    <filter string="Stato Medico" name="group_medical_status" context="{'group_by': 'medical_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action per Atleti -->
+    <record id="action_athlete" model="ir.actions.act_window">
+        <field name="name">Atleti</field>
+        <field name="res_model">medical.athlete</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_active_members': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea il tuo primo atleta!
+            </p>
+            <p>
+                Registra gli atleti della tua ASD per tenere traccia delle loro visite mediche.
+            </p>
+        </field>
+    </record>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequenze per numerazione automatica -->
+    <record id="seq_athlete_code" model="ir.sequence">
+        <field name="name">Codice Atleta</field>
+        <field name="code">medical.athlete.code</field>
+        <field name="prefix">ATL</field>
+        <field name="padding">3</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="seq_medical_visit" model="ir.sequence">
+        <field name="name">Visita Medica</field>
+        <field name="code">medical.visit</field>
+        <field name="prefix">VM</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Tipi di visita predefiniti -->
+    <record id="visit_type_initial" model="medical.visit.type">
+        <field name="name">Visita Iniziale</field>
+        <field name="code">initial</field>
+        <field name="description">Prima visita medica per idoneità sportiva</field>
+        <field name="default_validity_months">12</field>
+    </record>
+
+    <record id="visit_type_renewal" model="medical.visit.type">
+        <field name="name">Rinnovo Certificato</field>
+        <field name="code">renewal</field>
+        <field name="description">Visita per il rinnovo del certificato di idoneità</field>
+        <field name="default_validity_months">12</field>
+    </record>
+
+    <record id="visit_type_control" model="medical.visit.type">
+        <field name="name">Visita di Controllo</field>
+        <field name="code">control</field>
+        <field name="description">Visita di controllo periodica</field>
+        <field name="default_validity_months">6</field>
+    </record>
+
+    <record id="visit_type_return" model="medical.visit.type">
+        <field name="name">Visita Post-Infortunio</field>
+        <field name="code">return</field>
+        <field name="description">Visita di controllo dopo infortunio</field>
+        <field name="default_validity_months">12</field>
+    </record>
+
+    <record id="visit_type_special" model="medical.visit.type">
+        <field name="name">Visita Specialistica</field>
+        <field name="code">special</field>
+        <field name="description">Visita specialistica per attività agonistica</field>
+        <field name="default_validity_months">12</field>
+    </record>
+
+    <!-- Centri medici di esempio -->
+    <record id="medical_center_example_1" model="medical.center">
+        <field name="name">Studio Medico Dr. Rossi</field>
+        <field name="address">Via Roma 123, 00100 Roma</field>
+        <field name="phone">06-1234567</field>
+        <field name="email">info@studiorossi.it</field>
+        <field name="contact_person">Dr. Mario Rossi</field>
+        <field name="specializations">Medicina dello Sport, Cardiologia</field>
+        <field name="notes">Convenzionato con la ASD</field>
+    </record>
+
+    <record id="medical_center_example_2" model="medical.center">
+        <field name="name">Centro Medico Sportivo</field>
+        <field name="address">Piazza dello Sport 1, 00200 Roma</field>
+        <field name="phone">06-7654321</field>
+        <field name="email">info@centrosportivo.it</field>
+        <field name="website">www.centrosportivo.it</field>
+        <field name="contact_person">Dr.ssa Anna Bianchi</field>
+        <field name="specializations">Medicina dello Sport, Ortopedia, Fisiatria</field>
+        <field name="notes">Specializzato in visite per atleti agonisti</field>
+    </record>
+
+    <!-- Cron job per controllo scadenze -->
+    <record id="cron_check_expiring_visits" model="ir.cron">
+        <field name="name">Controllo Visite Mediche in Scadenza</field>
+        <field name="model_id" ref="model_medical_visit"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_check_expiring_visits()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Email template per notifica scadenze -->
+    <record id="email_template_visit_expiring" model="mail.template">
+        <field name="name">Notifica Scadenza Visita Medica</field>
+        <field name="model_id" ref="model_medical_visit"/>
+        <field name="subject">Promemoria: Visita Medica in Scadenza - {{ object.athlete_name }}</field>
+        <field name="body_html"><![CDATA[
+<p>Gentile responsabile,</p>
+
+<p>La visita medica dell'atleta <strong>{{ object.athlete_name }}</strong> (Codice: {{ object.athlete_code }}) è prossima alla scadenza.</p>
+
+<p><strong>Dettagli:</strong></p>
+<ul>
+    <li>Atleta: {{ object.athlete_name }}</li>
+    <li>Data visita: {{ object.visit_date }}</li>
+    <li>Data scadenza: {{ object.expiry_date }}</li>
+    <li>Giorni rimanenti: {{ object.days_to_expiry }}</li>
+    <li>Medico: {{ object.doctor_name }}</li>
+</ul>
+
+<p>Si prega di programmare il rinnovo della visita medica prima della scadenza.</p>
+
+<p>Cordiali saluti,<br/>
+Sistema Gestione Visite Mediche ASD</p>
+        ]]></field>
+        <field name="auto_delete">True</field>
+    </record>
+</odoo>

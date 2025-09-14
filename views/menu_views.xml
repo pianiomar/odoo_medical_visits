@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principale -->
+    <menuitem id="menu_medical_visits_main" name="Visite Mediche ASD" sequence="10"/>
+    
+    <!-- Sottomenu Atleti -->
+    <menuitem id="menu_athletes" name="Atleti" parent="menu_medical_visits_main" sequence="10"/>
+    <menuitem id="menu_athlete_list" action="action_athlete" parent="menu_athletes" name="Tutti gli Atleti" sequence="10"/>
+    
+    <!-- Sottomenu Visite -->
+    <menuitem id="menu_visits" name="Visite Mediche" parent="menu_medical_visits_main" sequence="20"/>
+    <menuitem id="menu_visit_list" action="action_medical_visit" parent="menu_visits" name="Tutte le Visite" sequence="10"/>
+    <menuitem id="menu_visit_expiring" action="action_medical_visit_expiring" parent="menu_visits" name="In Scadenza" sequence="20"/>
+    <menuitem id="menu_visit_expired" action="action_medical_visit_expired" parent="menu_visits" name="Scaduti" sequence="30"/>
+    
+    <!-- Dashboard Action -->
+    <record id="action_medical_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard Visite Mediche</field>
+        <field name="tag">medical_visits_dashboard</field>
+    </record>
+    
+    <!-- Menu Dashboard -->
+    <menuitem id="menu_medical_dashboard" action="action_medical_dashboard" parent="menu_medical_visits_main" name="Dashboard" sequence="5"/>
+
+    <!-- Vista Dashboard personalizzata (placeholder per future implementazioni) -->
+    <record id="view_medical_dashboard" model="ir.ui.view">
+        <field name="name">medical.dashboard</field>
+        <field name="model">medical.athlete</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard Visite Mediche">
+                <sheet>
+                    <div class="o_form_sheet_bg">
+                        <div class="o_form_sheet">
+                            <div class="oe_title">
+                                <h1>Dashboard Visite Mediche ASD</h1>
+                            </div>
+                            <group>
+                                <group string="Statistiche Rapide">
+                                    <!-- Qui verranno aggiunte le statistiche in un futuro aggiornamento -->
+                                    <div>
+                                        <p>Dashboard in sviluppo...</p>
+                                        <p>Usa i menu laterali per accedere alle funzioni:</p>
+                                        <ul>
+                                            <li>Atleti → Gestione anagrafica atleti</li>
+                                            <li>Visite Mediche → Tutte le visite</li>
+                                            <li>In Scadenza → Certificati prossimi alla scadenza</li>
+                                            <li>Scaduti → Certificati da rinnovare</li>
+                                        </ul>
+                                    </div>
+                                </group>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Shortcut Actions per accesso rapido -->
+    <record id="action_quick_new_athlete" model="ir.actions.act_window">
+        <field name="name">Nuovo Atleta</field>
+        <field name="res_model">medical.athlete</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_quick_new_visit" model="ir.actions.act_window">
+        <field name="name">Nuova Visita</field>
+        <field name="res_model">medical.visit</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Configurazione -->
+    <menuitem id="menu_medical_config" name="Configurazione" parent="menu_medical_visits_main" sequence="90" groups="base.group_system"/>
+    
+    <!-- Modelli di configurazione -->
+    <record id="action_medical_visit_type" model="ir.actions.act_window">
+        <field name="name">Tipi di Visita</field>
+        <field name="res_model">medical.visit.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record id="action_medical_center" model="ir.actions.act_window">
+        <field name="name">Centri Medici</field>
+        <field name="res_model">medical.center</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_visit_types" action="action_medical_visit_type" parent="menu_medical_config" name="Tipi di Visita" sequence="10"/>
+    <menuitem id="menu_medical_centers" action="action_medical_center" parent="menu_medical_config" name="Centri Medici" sequence="20"/>
+</odoo>

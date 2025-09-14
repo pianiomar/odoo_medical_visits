@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Form Visita Medica -->
+    <record id="view_medical_visit_form" model="ir.ui.view">
+        <field name="name">medical.visit.form</field>
+        <field name="model">medical.visit</field>
+        <field name="arch" type="xml">
+            <form string="Visita Medica">
+                <header>
+                    <button name="action_mark_as_current" type="object" string="Marca come Corrente" class="btn-primary" invisible="is_current"/>
+                    <button name="action_send_expiry_reminder" type="object" string="Invia Promemoria" class="btn-secondary"/>
+                    <field name="result" widget="statusbar" statusbar_visible="pending,suitable,suitable_with_limits,not_suitable"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="toggle" icon="fa-check-circle" invisible="not is_current">
+                            <span class="o_stat_text">Certificato</span>
+                            <span class="o_stat_text">Corrente</span>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Scaduto" bg_color="bg-danger" invisible="days_to_expiry &gt; 0"/>
+                    <widget name="web_ribbon" title="In Scadenza" bg_color="bg-warning" invisible="days_to_expiry &lt;= 0 or days_to_expiry &gt; 30"/>
+                    
+                    <div class="oe_title">
+                        <label for="name" string="Numero Visita"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group name="athlete_info" string="Atleta">
+                            <field name="athlete_id" options="{'no_create': False, 'no_open': False}"/>
+                            <field name="athlete_code" readonly="1"/>
+                        </group>
+                        
+                        <group name="visit_info" string="Informazioni Visita">
+                            <field name="visit_type"/>
+                            <field name="visit_date"/>
+                            <field name="result"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group name="doctor_info" string="Medico/Struttura">
+                            <field name="doctor_name"/>
+                            <field name="medical_center"/>
+                            <field name="doctor_registration"/>
+                        </group>
+                        
+                        <group name="validity_info" string="Validità">
+                            <field name="issue_date"/>
+                            <field name="validity_months"/>
+                            <field name="expiry_date"/>
+                            <field name="days_to_expiry" readonly="1"/>
+                            <field name="is_current" readonly="1" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Parametri Fisici" name="physical_params">
+                            <group>
+                                <group string="Misure Corporee">
+                                    <field name="height"/>
+                                    <field name="weight"/>
+                                    <field name="bmi" readonly="1"/>
+                                    <field name="bmi_category" readonly="1" widget="badge" decoration-success="bmi_category == 'normal'" decoration-warning="bmi_category in ('underweight', 'overweight')" decoration-danger="bmi_category == 'obese'"/>
+                                </group>
+                                
+                                <group string="Parametri Vitali">
+                                    <field name="blood_pressure_sys"/>
+                                    <field name="blood_pressure_dia"/>
+                                    <field name="heart_rate"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Note Mediche" name="medical_notes">
+                            <group>
+                                <field name="limitations" string="Limitazioni/Prescrizioni" placeholder="Eventuali limitazioni o prescrizioni mediche..."/>
+                                <field name="medical_notes" string="Note del Medico" placeholder="Note e osservazioni del medico..."/>
+                                <field name="notes" string="Note Generali" placeholder="Note aggiuntive..."/>
+                            </group>
+                        </page>
+                        
+                        <page string="Documenti" name="documents">
+                            <group>
+                                <group string="Certificato Principale">
+                                    <field name="certificate_file" filename="certificate_filename"/>
+                                    <field name="certificate_filename" invisible="1"/>
+                                </group>
+                                
+                                <group string="Documenti Aggiuntivi">
+                                    <field name="additional_documents" filename="additional_documents_filename"/>
+                                    <field name="additional_documents_filename" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Costi" name="costs" groups="base.group_user">
+                            <group>
+                                <field name="cost"/>
+                                <field name="currency_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree Visita Medica -->
+    <record id="view_medical_visit_tree" model="ir.ui.view">
+        <field name="name">medical.visit.tree</field>
+        <field name="model">medical.visit</field>
+        <field name="arch" type="xml">
+            <tree string="Visite Mediche" decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'" decoration-muted="not active">
+                <field name="name"/>
+                <field name="athlete_name"/>
+                <field name="athlete_code"/>
+                <field name="visit_date"/>
+                <field name="visit_type"/>
+                <field name="doctor_name"/>
+                <field name="result" widget="badge" decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'"/>
+                <field name="expiry_date"/>
+                <field name="days_to_expiry" decoration-danger="days_to_expiry &lt; 0" decoration-warning="days_to_expiry &lt;= 30 and days_to_expiry &gt;= 0"/>
+                <field name="is_current" widget="boolean_toggle"/>
+                <field name="medical_center"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Calendar Visita Medica -->
+    <record id="view_medical_visit_calendar" model="ir.ui.view">
+        <field name="name">medical.visit.calendar</field>
+        <field name="model">medical.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Visite Mediche" date_start="visit_date" color="result" quick_add="False">
+                <field name="athlete_name"/>
+                <field name="visit_type"/>
+                <field name="doctor_name"/>
+                <field name="result"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vista Gantt per Scadenze -->
+    <record id="view_medical_visit_gantt" model="ir.ui.view">
+        <field name="name">medical.visit.gantt</field>
+        <field name="model">medical.visit</field>
+        <field name="arch" type="xml">
+            <gantt string="Scadenze Visite" date_start="visit_date" date_stop="expiry_date" default_group_by="athlete_id" color="result">
+                <field name="athlete_name"/>
+                <field name="visit_type"/>
+                <field name="result"/>
+            </gantt>
+        </field>
+    </record>
+
+    <!-- Vista Search Visita Medica -->
+    <record id="view_medical_visit_search" model="ir.ui.view">
+        <field name="name">medical.visit.search</field>
+        <field name="model">medical.visit</field>
+        <field name="arch" type="xml">
+            <search string="Cerca Visite Mediche">
+                <field name="name"/>
+                <field name="athlete_name" string="Atleta"/>
+                <field name="athlete_code" string="Codice Atleta"/>
+                <field name="doctor_name" string="Medico"/>
+                <field name="medical_center" string="Centro Medico"/>
+                
+                <filter string="Visite Attive" name="active_visits" domain="[('active', '=', True)]"/>
+                <filter string="Certificati Correnti" name="current_certificates" domain="[('is_current', '=', True)]"/>
+                
+                <separator/>
+                <filter string="Idonei" name="suitable" domain="[('result', '=', 'suitable')]"/>
+                <filter string="Idonei con Limitazioni" name="suitable_with_limits" domain="[('result', '=', 'suitable_with_limits')]"/>
+                <filter string="Non Idonei" name="not_suitable" domain="[('result', '=', 'not_suitable')]"/>
+                <filter string="In Attesa" name="pending" domain="[('result', '=', 'pending')]"/>
+                
+                <separator/>
+                <filter string="Scadute" name="expired" domain="[('days_to_expiry', '&lt;', 0)]"/>
+                <filter string="In Scadenza (30gg)" name="expiring_30" domain="[('days_to_expiry', '&gt;=', 0), ('days_to_expiry', '&lt;=', 30)]"/>
+                <filter string="Scadenza Futura" name="future_expiry" domain="[('days_to_expiry', '&gt;', 30)]"/>
+                
+                <separator/>
+                <filter string="Questo Mese" name="this_month" domain="[('visit_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')), ('visit_date', '&lt;', ((context_today().replace(day=1)) + relativedelta(months=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Ultimi 3 Mesi" name="last_3_months" domain="[('visit_date', '&gt;=', (context_today() - relativedelta(months=3)).strftime('%Y-%m-%d'))]"/>
+                
+                <group expand="0" string="Raggruppa per">
+                    <filter string="Atleta" name="group_athlete" context="{'group_by': 'athlete_id'}"/>
+                    <filter string="Tipo Visita" name="group_visit_type" context="{'group_by': 'visit_type'}"/>
+                    <filter string="Risultato" name="group_result" context="{'group_by': 'result'}"/>
+                    <filter string="Medico" name="group_doctor" context="{'group_by': 'doctor_name'}"/>
+                    <filter string="Data Visita" name="group_visit_date" context="{'group_by': 'visit_date'}"/>
+                    <filter string="Data Scadenza" name="group_expiry_date" context="{'group_by': 'expiry_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action per Visite Mediche -->
+    <record id="action_medical_visit" model="ir.actions.act_window">
+        <field name="name">Visite Mediche</field>
+        <field name="res_model">medical.visit</field>
+        <field name="view_mode">tree,form,calendar,gantt</field>
+        <field name="context">{'search_default_active_visits': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Registra la prima visita medica!
+            </p>
+            <p>
+                Tieni traccia di tutte le visite mediche sportive degli atleti della tua ASD.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action per Scadenze -->
+    <record id="action_medical_visit_expiring" model="ir.actions.act_window">
+        <field name="name">Certificati in Scadenza</field>
+        <field name="res_model">medical.visit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('days_to_expiry', '&gt;=', 0), ('days_to_expiry', '&lt;=', 30), ('result', '=', 'suitable')]</field>
+        <field name="context">{'search_default_expiring_30': 1}</field>
+    </record>
+
+    <!-- Action per Certificati Scaduti -->
+    <record id="action_medical_visit_expired" model="ir.actions.act_window">
+        <field name="name">Certificati Scaduti</field>
+        <field name="res_model">medical.visit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('days_to_expiry', '&lt;', 0), ('result', '=', 'suitable')]</field>
+        <field name="context">{'search_default_expired': 1}</field>
+    </record>
+</odoo>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Viste per Tipi di Visita -->
+    <record id="view_medical_visit_type_tree" model="ir.ui.view">
+        <field name="name">medical.visit.type.tree</field>
+        <field name="model">medical.visit.type</field>
+        <field name="arch" type="xml">
+            <tree string="Tipi di Visita" editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="default_validity_months"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_medical_visit_type_form" model="ir.ui.view">
+        <field name="name">medical.visit.type.form</field>
+        <field name="model">medical.visit.type</field>
+        <field name="arch" type="xml">
+            <form string="Tipo Visita">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="default_validity_months"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Descrizione">
+                        <field name="description" nolabel="1" placeholder="Descrizione del tipo di visita..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Viste per Centri Medici -->
+    <record id="view_medical_center_tree" model="ir.ui.view">
+        <field name="name">medical.center.tree</field>
+        <field name="model">medical.center</field>
+        <field name="arch" type="xml">
+            <tree string="Centri Medici">
+                <field name="name"/>
+                <field name="contact_person"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="specializations"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_medical_center_form" model="ir.ui.view">
+        <field name="name">medical.center.form</field>
+        <field name="model">medical.center</field>
+        <field name="arch" type="xml">
+            <form string="Centro Medico">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Contatti">
+                            <field name="contact_person"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="website" widget="url"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Indirizzo">
+                        <field name="address" nolabel="1" placeholder="Indirizzo completo..."/>
+                    </group>
+                    <group string="Specializzazioni">
+                        <field name="specializations" nolabel="1" placeholder="Es: Medicina dello Sport, Cardiologia, Ortopedia..."/>
+                    </group>
+                    <group string="Note">
+                        <field name="notes" nolabel="1" placeholder="Note aggiuntive sul centro medico..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Kanban per Centri Medici -->
+    <record id="view_medical_center_kanban" model="ir.ui.view">
+        <field name="name">medical.center.kanban</field>
+        <field name="model">medical.center</field>
+        <field name="arch" type="xml">
+            <kanban string="Centri Medici">
+                <field name="name"/>
+                <field name="contact_person"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="specializations"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                        <br/>
+                                        <small t-if="record.contact_person.value">
+                                            <i class="fa fa-user" role="img" aria-label="Contatto" title="Contatto"/>
+                                            <field name="contact_person"/>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div t-if="record.phone.value">
+                                        <i class="fa fa-phone" role="img" aria-label="Telefono" title="Telefono"/>
+                                        <field name="phone"/>
+                                    </div>
+                                    <div t-if="record.email.value">
+                                        <i class="fa fa-envelope" role="img" aria-label="Email" title="Email"/>
+                                        <field name="email"/>
+                                    </div>
+                                    <div t-if="record.specializations.value">
+                                        <i class="fa fa-stethoscope" role="img" aria-label="Specializzazioni" title="Specializzazioni"/>
+                                        <field name="specializations"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_right" t-if="not record.active.raw_value">
+                                        <span class="badge badge-secondary">Non Attivo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>
