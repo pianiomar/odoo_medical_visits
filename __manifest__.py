@@ -1,7 +1,7 @@
 {
     'name': 'Visite Mediche Atleti ASD',
-    'version': '17.0.1.0.0',
-    'category': 'Sports Management',
+    'version': '18.0.1.0.0',
+    'category': 'Productivity',
     'summary': 'Gestione visite mediche annuali per atleti ASD',
     'description': """
         Modulo per la gestione delle visite mediche degli atleti
@@ -16,13 +16,13 @@
     """,
     'author': 'Il tuo nome',
     'website': 'https://www.tuaasd.it',
-    'depends': ['base', 'mail', 'web'],
+    'depends': ['base', 'mail'],
     'data': [
         'security/ir.model.access.csv',
         'views/athlete_views.xml',
         'views/medical_visit_views.xml',
         'views/menu_views.xml',
-        'data/medical_visit_data.xml',
+        'views/medical_visit_data.xml',
     ],
     'demo': [],
     'installable': True,

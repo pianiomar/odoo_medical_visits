@@ -85,7 +85,7 @@
                         
                         <page string="Visite Mediche" name="medical_visits">
                             <field name="medical_visit_ids" context="{'default_athlete_id': active_id}">
-                                <tree decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'">
+                                <tree>
                                     <field name="name"/>
                                     <field name="visit_date"/>
                                     <field name="visit_type"/>
@@ -236,3 +236,5 @@
             </p>
         </field>
     </record>
+
+</odoo>
