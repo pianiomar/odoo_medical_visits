@@ -10,7 +10,7 @@ class Athlete(models.Model):
     _order = 'name'
 
     # Dati anagrafici
-    name = fields.Char(string='Nome Completo', required=True, tracking=True)
+    name = fields.Char(string='Nome Completo', compute='_compute_name', store=True, tracking=True)
     first_name = fields.Char(string='Nome', required=True)
     last_name = fields.Char(string='Cognome', required=True)
     
@@ -142,14 +142,27 @@ class Athlete(models.Model):
         return super().create(vals)
 
     def write(self, vals):
+        result = super().write(vals)
+
         # Aggiorna il nome completo se cambiano nome o cognome
         if 'first_name' in vals or 'last_name' in vals:
             for record in self:
-                first_name = vals.get('first_name', record.first_name)
-                last_name = vals.get('last_name', record.last_name)
-                vals['name'] = f"{first_name} {last_name}"
-        
-        return super().write(vals)
+                record.name = f"{record.first_name} {record.last_name}"
+
+        return result
+
+    @api.depends('first_name', 'last_name')
+    def _compute_name(self):
+        """Calcola automaticamente il nome completo"""
+        for record in self:
+            if record.first_name and record.last_name:
+                record.name = f"{record.first_name} {record.last_name}"
+            elif record.first_name:
+                record.name = record.first_name
+            elif record.last_name:
+                record.name = record.last_name
+            else:
+                record.name = "Nuovo Atleta"
 
     def action_view_medical_visits(self):
         """Apre la vista delle visite mediche per questo atleta"""

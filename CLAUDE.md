@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Odoo 17 custom module for managing medical visits for athletes in Italian sports associations (ASD - Associazione Sportiva Dilettantistica). The module tracks athlete medical certificates, visit schedules, and compliance with Italian sports medicine regulations.
+This is an Odoo 18 custom module for managing medical visits for athletes in Italian sports associations (ASD - Associazione Sportiva Dilettantistica). The module tracks athlete medical certificates, visit schedules, and compliance with Italian sports medicine regulations.
 
 ## Core Architecture
 
@@ -30,18 +30,14 @@ This is an Odoo 17 custom module for managing medical visits for athletes in Ita
 ### Odoo Module Operations
 ```bash
 # Module update (after code changes)
-python3 odoo-bin --addons-path=/path/to/odoo/addons,/path/to/odoo/odoo/addons,/path/to/custom-addons -u medical_visits -d database_name
+python3 odoo-bin -u medical_visits -d database_name
 
 # Install module
-python3 odoo-bin --addons-path=/path/to/odoo/addons,/path/to/odoo/odoo/addons,/path/to/custom-addons -i medical_visits -d database_name
+python3 odoo-bin -i medical_visits -d database_name
 
 # Debug mode with specific module
-python3 odoo-bin --addons-path=/path/to/odoo/addons,/path/to/odoo/odoo/addons,/path/to/custom-addons -d database_name --dev=reload,qweb,werkzeug,xml
+python3 odoo-bin -d database_name --dev=reload,qweb,werkzeug,xml
 ```
-
-### Version Compatibility
-- Module version must match Odoo version (18.0.x.y.z format for Odoo 18)
-- Category should use standard Odoo categories (e.g., 'Productivity')
 
 ### Testing
 No specific test framework is configured. Test manually through Odoo interface or create standard Odoo test files in `tests/` directory.
@@ -90,4 +86,3 @@ Permissions defined in `security/ir.model.access.csv`:
 - Add sports disciplines in `athlete.py:45` selection field
 - Modify certificate validity in `medical_visit.py:45` default value
 - Extend medical center fields in `medical_visit.py:227`
-- Module is build for Odoo 18
