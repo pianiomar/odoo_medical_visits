@@ -14,9 +14,11 @@
     <menuitem id="menu_visit_expired" action="action_medical_visit_expired" parent="menu_visits" name="Scaduti" sequence="30"/>
     
     <!-- Dashboard Action -->
-    <record id="action_medical_dashboard" model="ir.actions.client">
+    <record id="action_medical_dashboard" model="ir.actions.act_window">
         <field name="name">Dashboard Visite Mediche</field>
-        <field name="tag">medical_visits_dashboard</field>
+        <field name="res_model">medical.athlete</field>
+        <field name="view_mode">kanban</field>
+        <field name="context">{'search_default_active_members': 1}</field>
     </record>
     
     <!-- Menu Dashboard -->
@@ -78,13 +80,13 @@
     <record id="action_medical_visit_type" model="ir.actions.act_window">
         <field name="name">Tipi di Visita</field>
         <field name="res_model">medical.visit.type</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
     
     <record id="action_medical_center" model="ir.actions.act_window">
         <field name="name">Centri Medici</field>
         <field name="res_model">medical.center</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
     
     <menuitem id="menu_visit_types" action="action_medical_visit_type" parent="menu_medical_config" name="Tipi di Visita" sequence="10"/>

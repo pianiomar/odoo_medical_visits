@@ -5,12 +5,12 @@
         <field name="name">medical.visit.type.tree</field>
         <field name="model">medical.visit.type</field>
         <field name="arch" type="xml">
-            <tree string="Tipi di Visita" editable="bottom">
+            <list string="Tipi di Visita" editable="bottom">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="default_validity_months"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -44,14 +44,14 @@
         <field name="name">medical.center.tree</field>
         <field name="model">medical.center</field>
         <field name="arch" type="xml">
-            <tree string="Centri Medici">
+            <list string="Centri Medici">
                 <field name="name"/>
                 <field name="contact_person"/>
                 <field name="phone"/>
                 <field name="email"/>
                 <field name="specializations"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

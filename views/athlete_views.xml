@@ -84,8 +84,8 @@
                         </page>
                         
                         <page string="Visite Mediche" name="medical_visits">
-                            <field name="medical_visit_ids" context="{'default_athlete_id': active_id}">
-                                <tree>
+                            <field name="medical_visit_ids" context="{'default_athlete_id': id}">
+                                <list>
                                     <field name="name"/>
                                     <field name="visit_date"/>
                                     <field name="visit_type"/>
@@ -94,7 +94,7 @@
                                     <field name="expiry_date"/>
                                     <field name="days_to_expiry"/>
                                     <field name="is_current" widget="boolean_toggle"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         
@@ -117,7 +117,7 @@
         <field name="name">medical.athlete.tree</field>
         <field name="model">medical.athlete</field>
         <field name="arch" type="xml">
-            <tree string="Atleti" decoration-muted="not active_member" decoration-danger="medical_status == 'expired'" decoration-warning="medical_status == 'expiring'">
+            <list string="Atleti" decoration-muted="not active_member" decoration-danger="medical_status == 'expired'" decoration-warning="medical_status == 'expiring'">
                 <field name="athlete_code"/>
                 <field name="name"/>
                 <field name="age"/>
@@ -129,7 +129,7 @@
                 <field name="active_member" widget="boolean_toggle"/>
                 <field name="email"/>
                 <field name="mobile"/>
-            </tree>
+            </list>
         </field>
     </record>
 

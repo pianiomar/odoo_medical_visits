@@ -77,7 +77,7 @@
         <field name="notes">Specializzato in visite per atleti agonisti</field>
     </record>
 
-    <!-- Cron job per controllo scadenze -->
+    <!-- Cron job per controllo scadenze DISABLED
     <record id="cron_check_expiring_visits" model="ir.cron">
         <field name="name">Controllo Visite Mediche in Scadenza</field>
         <field name="model_id" ref="model_medical_visit"/>
@@ -86,8 +86,10 @@
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="active">True</field>
+        <field name="doall">false</field>
+        <field name="active">true</field>
     </record>
+    -->
 
     <!-- Email template per notifica scadenze -->
     <record id="email_template_visit_expiring" model="mail.template">

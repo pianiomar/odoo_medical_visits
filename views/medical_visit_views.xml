@@ -14,7 +14,7 @@
                 
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="toggle" icon="fa-check-circle" invisible="not is_current">
+                        <button class="oe_stat_button" type="object" name="action_mark_as_current" icon="fa-check-circle" invisible="is_current">
                             <span class="o_stat_text">Certificato</span>
                             <span class="o_stat_text">Corrente</span>
                         </button>
@@ -121,7 +121,7 @@
         <field name="name">medical.visit.tree</field>
         <field name="model">medical.visit</field>
         <field name="arch" type="xml">
-            <tree string="Visite Mediche" decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'" decoration-muted="not active">
+            <list string="Visite Mediche" decoration-success="result == 'suitable'" decoration-warning="result == 'suitable_with_limits'" decoration-danger="result == 'not_suitable'" decoration-muted="not active">
                 <field name="name"/>
                 <field name="athlete_name"/>
                 <field name="athlete_code"/>
@@ -134,7 +134,7 @@
                 <field name="is_current" widget="boolean_toggle"/>
                 <field name="medical_center"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -143,7 +143,7 @@
         <field name="name">medical.visit.calendar</field>
         <field name="model">medical.visit</field>
         <field name="arch" type="xml">
-            <calendar string="Visite Mediche" date_start="visit_date" color="result" quick_add="False">
+            <calendar string="Visite Mediche" date_start="visit_date">
                 <field name="athlete_name"/>
                 <field name="visit_type"/>
                 <field name="doctor_name"/>
@@ -152,18 +152,6 @@
         </field>
     </record>
 
-    <!-- Vista Gantt per Scadenze -->
-    <record id="view_medical_visit_gantt" model="ir.ui.view">
-        <field name="name">medical.visit.gantt</field>
-        <field name="model">medical.visit</field>
-        <field name="arch" type="xml">
-            <gantt string="Scadenze Visite" date_start="visit_date" date_stop="expiry_date" default_group_by="athlete_id" color="result">
-                <field name="athlete_name"/>
-                <field name="visit_type"/>
-                <field name="result"/>
-            </gantt>
-        </field>
-    </record>
 
     <!-- Vista Search Visita Medica -->
     <record id="view_medical_visit_search" model="ir.ui.view">
@@ -187,9 +175,9 @@
                 <filter string="In Attesa" name="pending" domain="[('result', '=', 'pending')]"/>
                 
                 <separator/>
-                <filter string="Scadute" name="expired" domain="[('days_to_expiry', '&lt;', 0)]"/>
-                <filter string="In Scadenza (30gg)" name="expiring_30" domain="[('days_to_expiry', '&gt;=', 0), ('days_to_expiry', '&lt;=', 30)]"/>
-                <filter string="Scadenza Futura" name="future_expiry" domain="[('days_to_expiry', '&gt;', 30)]"/>
+                <filter string="Scadute" name="expired" domain="[('expiry_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="In Scadenza (30gg)" name="expiring_30" domain="[('expiry_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('expiry_date', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Scadenza Futura" name="future_expiry" domain="[('expiry_date', '&gt;', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
                 
                 <separator/>
                 <filter string="Questo Mese" name="this_month" domain="[('visit_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')), ('visit_date', '&lt;', ((context_today().replace(day=1)) + relativedelta(months=1)).strftime('%Y-%m-%d'))]"/>
@@ -211,7 +199,7 @@
     <record id="action_medical_visit" model="ir.actions.act_window">
         <field name="name">Visite Mediche</field>
         <field name="res_model">medical.visit</field>
-        <field name="view_mode">tree,form,calendar,gantt</field>
+        <field name="view_mode">list,form,calendar</field>
         <field name="context">{'search_default_active_visits': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

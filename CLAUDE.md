@@ -90,3 +90,4 @@ Permissions defined in `security/ir.model.access.csv`:
 - Add sports disciplines in `athlete.py:45` selection field
 - Modify certificate validity in `medical_visit.py:45` default value
 - Extend medical center fields in `medical_visit.py:227`
+- Module is build for Odoo 18
